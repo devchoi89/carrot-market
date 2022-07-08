@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import Button from "@components/button";
 import Input from "@components/input";
+import { useRouter } from "next/router";
 
 interface LoginForm {
   email: string;
@@ -11,8 +12,19 @@ interface LoginForm {
   errors?: string;
 }
 
+interface TokenForm {
+  token: string;
+}
+
+interface MutationResult {
+  ok: boolean;
+}
+
 export default function Enter() {
-  const [enter, { loading, data, error }] = useMutation("/api/users/enter");
+  const [enter, { loading, data, error }] =
+    useMutation<MutationResult>("/api/users/enter");
+  const [confirmToken, { loading: tokenLoading, data: tokenData }] =
+    useMutation<MutationResult>("/api/users/confirm");
   const [method, setMethod] = useState<"email" | "phone">("email");
   const onEmailClick = () => {
     setMethod("email");
@@ -23,76 +35,110 @@ export default function Enter() {
     reset();
   };
   const { register, handleSubmit, reset } = useForm<LoginForm>();
+  const { register: tokenRegister, handleSubmit: tokenHandleSubmit } =
+    useForm<TokenForm>();
   const onValid = (validForm: LoginForm) => {
     if (loading) return;
     enter(validForm);
   };
   const onInvalid = (errors: FieldErrors) => {};
+
+  const onTokenValid = (validForm: TokenForm) => {
+    if (tokenLoading) return;
+    confirmToken(validForm);
+  };
+
+  const router = useRouter();
+  useEffect(() => {
+    if (tokenData?.ok) {
+      router.push("/");
+    }
+  }, [tokenData, router]);
   return (
     <div>
       <h3 className="font-semibold text-2xl text-center mt-5">구리 마켓</h3>
       <img className="w-20 h-20 rounded-full mx-auto" src="/guri.gif" />
       <div>
-        <div className="text-center">
-          <h5 className="py-5">로그인</h5>
-          <div className="grid grid-cols-2 w-full">
-            <button
-              className={cls(
-                "border-b-2",
-                method === "email"
-                  ? "text-white bg-indigo-400 border-indigo-400 rounded-t-xl"
-                  : "text-indigo-400 border-transparent"
-              )}
-              onClick={onEmailClick}
-            >
-              Email
-            </button>
-            <button
-              className={cls(
-                "border-b-2",
-                method === "phone"
-                  ? "text-white bg-indigo-400 border-indigo-400 rounded-t-xl"
-                  : "text-indigo-400 border-transparent"
-              )}
-              onClick={onPhoneClick}
-            >
-              Phone
-            </button>
-          </div>
-        </div>
-        <form className="p-3" onSubmit={handleSubmit(onValid, onInvalid)}>
-          {method === "email" ? (
+        {data?.ok ? (
+          <form className="p-3" onSubmit={tokenHandleSubmit(onTokenValid)}>
             <Input
-              register={register("email", {
-                required: "이메일 주소를 입력해 주세요.",
+              register={tokenRegister("token", {
+                required: "토큰을 입력해주세요.",
               })}
-              label="이메일 주소"
-              name="email"
-              type="email"
+              label="Confirmation Token"
+              name="token"
+              type="number"
               kind="text"
               required
             ></Input>
-          ) : null}
-          {method === "phone" ? (
-            <Input
-              register={register("phone", {
-                required: "전화번호를 입력해 주세요.",
-              })}
-              label="전화번호"
-              name="phone"
-              type="number"
-              kind="phone"
-              required
-            ></Input>
-          ) : null}
+            <Button text={tokenLoading ? "로그인 중" : "Confirm Token"} />
+          </form>
+        ) : (
+          <>
+            <div className="text-center">
+              <h5 className="py-5">로그인</h5>
+              <div className="grid grid-cols-2 w-full">
+                <button
+                  className={cls(
+                    "border-b-2",
+                    method === "email"
+                      ? "text-white bg-indigo-400 border-indigo-400 rounded-t-xl"
+                      : "text-indigo-400 border-transparent"
+                  )}
+                  onClick={onEmailClick}
+                >
+                  Email
+                </button>
+                <button
+                  className={cls(
+                    "border-b-2",
+                    method === "phone"
+                      ? "text-white bg-indigo-400 border-indigo-400 rounded-t-xl"
+                      : "text-indigo-400 border-transparent"
+                  )}
+                  onClick={onPhoneClick}
+                >
+                  Phone
+                </button>
+              </div>
+            </div>
+            <form className="p-3" onSubmit={handleSubmit(onValid, onInvalid)}>
+              {method === "email" ? (
+                <Input
+                  register={register("email", {
+                    required: "이메일 주소를 입력해 주세요.",
+                  })}
+                  label="이메일 주소"
+                  name="email"
+                  type="email"
+                  kind="text"
+                  required
+                ></Input>
+              ) : null}
+              {method === "phone" ? (
+                <Input
+                  register={register("phone", {
+                    required: "전화번호를 입력해 주세요.",
+                  })}
+                  label="전화번호"
+                  name="phone"
+                  type="number"
+                  kind="phone"
+                  required
+                ></Input>
+              ) : null}
 
-          {method === "email" ? (
-            <Button text={loading ? "로그인 중" : "Get login link"} />
-          ) : null}
-          {method === "phone" ? (
-            <Button text={loading ? "로그인 중" : "Get one-time password"} />
-          ) : null}
-        </form>
+              {method === "email" ? (
+                <Button text={loading ? "로그인 중" : "Get login link"} />
+              ) : null}
+              {method === "phone" ? (
+                <Button
+                  text={loading ? "로그인 중" : "Get one-time password"}
+                />
+              ) : null}
+            </form>
+          </>
+        )}
         <div>
           <div>
             <div />
