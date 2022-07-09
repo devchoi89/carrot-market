@@ -24,12 +24,12 @@ export default function Layout({
     <div>
       <div
         className={cls(
-          "bg-white w-full max-w-lg mx-auto text-lg font-medium py-2 fixed text-gray-700 border-b top-0 flex items-center",
+          "bg-white w-full max-w-lg mx-auto text-lg font-medium py-2 fixed text-gray-700 border-b top-0 flex justify-center items-center",
           canGoBack ? "" : "justify-center"
         )}
       >
         {canGoBack ? (
-          <button onClick={onClick}>
+          <button onClick={onClick} className="absolute left-4">
             <span>
               <svg
                 className="w-6 h-6"
@@ -48,7 +48,7 @@ export default function Layout({
             </span>
           </button>
         ) : null}
-        {title ? <span>{title}</span> : null}
+        {title ? <span className="font-bold text-sm">{title}</span> : null}
       </div>
       <div className={cls("pt-16", hasTabBar ? "pb-16" : "")}>{children}</div>
       {hasTabBar ? (

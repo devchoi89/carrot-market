@@ -5,7 +5,7 @@ import Link from "next/link";
 const Profile: NextPage = () => {
   return (
     <Layout title="프로필" canGoBack>
-      <div className="max-w-lg divide-y-[1px] pb-10">
+      <div className="max-w-lg mx-3 divide-y-[1px] pb-10">
         <div className="flex items-center space-x-2 py-3">
           <div className="aspect-square w-20 rounded-full bg-red-300" />
           <div>

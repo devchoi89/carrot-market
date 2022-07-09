@@ -1,11 +1,11 @@
-import FloatingBtn from "@components/floating-Btn";
+import FloatingBtn from "@components/floating-btn";
 import Layout from "@components/layout";
 import type { NextPage } from "next";
 import Link from "next/link";
 
 const Community: NextPage = () => {
   return (
-    <Layout title="동네질문" hasTabBar>
+    <Layout title="동네생활" hasTabBar>
       <div className="max-w-lg divide-y-[1px] px-2">
         {[1, 1, 1, 1, 1, 1].map((_, i) => (
           <Link href={`/community/${i}`} key={i}>

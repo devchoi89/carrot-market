@@ -16,7 +16,7 @@ const CommunityPostDetail: NextPage = () => {
     reply(onValidForm);
   };
   return (
-    <Layout canGoBack>
+    <Layout title="동네질문" canGoBack>
       <div className="pb-10 flex flex-col">
         <span className="ml-3 py-1 mb-2 text-xs px-2 bg-slate-200 rounded-l-full rounded-r-full w-fit">
           동네질문
