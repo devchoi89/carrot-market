@@ -13,13 +13,13 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  phone    String?  @unique
-  email    String?  @unique
+  id       Int       @id @default(autoincrement())
+  phone    String?   @unique
+  email    String?   @unique
   name     String
   avatar   String?
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  createAt DateTime  @default(now())
+  updateAt DateTime  @updatedAt
   tokens   Token[]
   products Product[]
   fav      Fav[]
@@ -77,7 +77,7 @@ model Answer {
   userId    Int
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
-  Answer    String   @db.MediumText
+  answer    String   @db.MediumText
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
