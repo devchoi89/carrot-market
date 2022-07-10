@@ -12,6 +12,17 @@ async function handler(
     query: { id },
     session: { user },
   } = req;
+  //해당 페이지가 있는지 먼저 확인
+  const product = await client.product.findUnique({
+    where: {
+      //id가 배열일 수 있으므로 toString()
+      id: +id.toString(),
+    },
+    select: {
+      id: true,
+    },
+  });
+  if (!product) res.status(404).json({ ok: false, error: "Not found page" });
   const alreadyExists = await client.fav.findFirst({
     where: {
       productId: +id.toString(),

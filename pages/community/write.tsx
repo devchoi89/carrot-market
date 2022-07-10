@@ -1,6 +1,7 @@
 import Button from "@components/button";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
+import useCoords from "@libs/client/useCoords";
 import useMutation from "@libs/client/useMutation";
 import { Post } from "@prisma/client";
 import type { NextPage } from "next";
@@ -18,19 +19,21 @@ interface QuestionResponse {
 }
 
 const Write: NextPage = () => {
+  const { latitude, longitude } = useCoords();
+  console.log({ latitude, longitude });
   const router = useRouter();
   const { register, handleSubmit } = useForm<QuestionForm>();
   const [post, { loading, data }] = useMutation<QuestionResponse>("/api/posts");
   const onValid = (validForm: QuestionForm) => {
     if (loading) return;
-    post(validForm);
+    post({ ...validForm, latitude, longitude });
   };
   useEffect(() => {
     if (data && data.ok) {
       router.push(`/community/${data.post.id}`);
     }
-    console.log(data);
   }, [data, router]);
+
   return (
     <Layout title="질문하기" canGoBack>
       <form

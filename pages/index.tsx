@@ -5,9 +5,9 @@ import Head from "next/head";
 import useSWR from "swr";
 import { Product } from "@prisma/client";
 import Item from "@components/item";
-import FloatingBtn from "@components/floating-Btn";
+import FloatingBtn from "@components/floating-btn";
 
-interface ProductWithCount extends Product {
+export interface ProductWithCount extends Product {
   _count: {
     favs: number;
   };
@@ -23,9 +23,9 @@ const Home: NextPage = () => {
   const { data, error } = useSWR<ProductsResponse>("/api/products");
   console.log(data);
   return (
-    <Layout title="Home" hasTabBar>
+    <Layout title="홈" hasTabBar>
       <Head>
-        <title>Home</title>
+        <title>홈</title>
       </Head>
       <div className="max-w-lg divide-y-[1px] pb-5">
         {data?.products?.map((product) => (
@@ -34,7 +34,6 @@ const Home: NextPage = () => {
             title={product.name}
             price={product.price}
             id={product.id}
-            comments={1}
             hearts={product._count.favs}
           ></Item>
         ))}
@@ -59,6 +58,9 @@ const Home: NextPage = () => {
           href="/products/upload"
         ></FloatingBtn>
       </div>
+      <button className="hover:outline-dashed outline-offset-2 outline-gray-400 outline-2 py-1 px-4 rounded-r-full rounded-l-full  bg-pink-500 text-sm text-white font-bold ">
+        구입
+      </button>
     </Layout>
   );
 };

@@ -38,7 +38,7 @@ const ItemDetail: NextPage = () => {
     toggleFav({});
   };
   return (
-    <Layout canGoBack>
+    <Layout title={data?.product?.name} canGoBack>
       <div className="px-5 max-w-lg">
         <div>
           <div className="w-full h-48 bg-gray-400 rounded-md" />
@@ -94,7 +94,6 @@ const ItemDetail: NextPage = () => {
                 title={product?.name}
                 price={product?.price}
                 id={product?.id}
-                comments={1}
                 hearts={1}
               ></Item>
             ))}

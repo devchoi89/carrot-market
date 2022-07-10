@@ -10,7 +10,9 @@ async function handler(
   const {
     query: { id },
     session: { user },
+    body: { answer },
   } = req;
+
   const post = await client.post.findUnique({
     where: {
       //id가 배열일 수 있으므로 toString()
@@ -21,39 +23,23 @@ async function handler(
     },
   });
   if (!post) res.status(404).json({ ok: false, error: "Not found page" });
-  const alreadyExists = await client.ward.findFirst({
-    where: {
-      userId: user?.id,
-      postId: +id.toString(),
-    },
-    select: {
-      id: true,
+
+  const newAnswer = await client.answer.create({
+    data: {
+      user: {
+        connect: {
+          id: user?.id,
+        },
+      },
+      post: { connect: { id: +id.toString() } },
+      answer,
     },
   });
-  if (alreadyExists) {
-    await client.ward.delete({
-      where: {
-        id: alreadyExists.id,
-      },
-    });
-  } else {
-    await client.ward.create({
-      data: {
-        user: {
-          connect: {
-            id: user?.id,
-          },
-        },
-        post: {
-          connect: {
-            id: +id.toString(),
-          },
-        },
-      },
-    });
-  }
+  console.log(newAnswer);
+
   res.json({
     ok: true,
+    answer: newAnswer,
   });
 }
 

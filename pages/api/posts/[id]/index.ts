@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import client from "@libs/server/client";
 import { withApiSession } from "@libs/server/withSession";
+import { userInfo } from "os";
 
 async function handler(
   req: NextApiRequest,
@@ -9,6 +10,7 @@ async function handler(
 ) {
   const {
     query: { id },
+    session: { user },
   } = req;
   const post = await client.post.findUnique({
     where: {
@@ -27,6 +29,7 @@ async function handler(
         select: {
           answer: true,
           id: true,
+          createdAt: true,
           user: {
             select: {
               id: true,
@@ -44,11 +47,22 @@ async function handler(
       },
     },
   });
-  console.log(post);
-  if (!post) res.status(404).json({ ok: false, error: "Not found post" });
+  const isWard = Boolean(
+    await client.ward.findFirst({
+      where: {
+        postId: +id.toString(),
+        userId: user?.id,
+      },
+      select: {
+        id: true,
+      },
+    })
+  );
+  if (!post) res.status(404).json({ ok: false, error: "Not found page" });
   res.json({
     ok: true,
     post,
+    isWard,
   });
 }
 

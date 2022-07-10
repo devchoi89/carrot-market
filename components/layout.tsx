@@ -29,7 +29,7 @@ export default function Layout({
         )}
       >
         {canGoBack ? (
-          <button onClick={onClick} className="absolute left-4">
+          <button onClick={onClick} className="absolute left-1">
             <span>
               <svg
                 className="w-6 h-6"
